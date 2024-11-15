@@ -6,7 +6,7 @@ class Request:
         self.path = environ.get('PATH_INFO', '/')
         self.query_string = environ.get('QUERY_STRING', '')
         self.headers = self._get_headers()
-        self.content_length = int(environ.get('CONTENT_LENGTH', 0))
+        self.content_length = int(environ.get('CONTENT_LENGTH', 0) or 0)
         self.body = self._get_body()
         self.remote_addr = environ.get('REMOTE_ADDR', '')
         self.scheme = environ.get('wsgi.url_scheme', 'http')
