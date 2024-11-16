@@ -24,10 +24,10 @@ def signin(request):
 
 
 def all_products(request):
-    template = 'products.html'
+    template = '/product/products.html'
     if request.query_string:
         print(request.query_string)
-        template = 'products_table.html'
+        template = '/product/products_table.html'
         data = get_products(
             filter_by=[
                 Filter(field='name', value=f"%{request.query_string['name']}%", criteria="ILIKE")

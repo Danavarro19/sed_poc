@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}products{% endblock %}
+
+{% block content %}
+    <h1>Productos</h1>
+    <div>
+        {% include '/product/products_search.html' %}
+    </div>
+    <div id="products_table">
+        {% include '/product/products_table.html' %}
+    </div>
+{% endblock %}
