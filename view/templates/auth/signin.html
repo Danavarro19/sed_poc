@@ -1,20 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}signup{% endblock %}
+{% block title %}signin{% endblock %}
+
 {% block content %}
-    <h1>Registro</h1>
-    <form action="/signup" method="post">
+    <h1>Ingreso</h1>
+    <form action="/signin" method="post">
         <label for="username">Usuario:</label>
         <input type="text" id="username" name="username" required autofocus>
-        <br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
         <br><br>
 
         <label for="password">Contraseña:</label>
         <input type="password" id="password" name="password" required>
         <br><br>
 
-        <input type="submit" value="Registrarse">
+        <input type="submit" value="Ingresar">
     </form>
 {% endblock %}

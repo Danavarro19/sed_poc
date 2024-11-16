@@ -3,11 +3,10 @@ from controller import controller
 urls = [
     ('/', controller.index),
     ('/index', controller.index),
-    ('/home', controller.home),
     ('/signup', controller.signup),
     ('/signin', controller.signin),
-    ('/products', controller.all_products),
-    ('/products/<key>', controller.product),
+    ('/products', controller.get_products),
+    ('/products/<key>', controller.get_product_by_id),
     ('/products/<key>/delete', controller.delete_product),
 ]
 

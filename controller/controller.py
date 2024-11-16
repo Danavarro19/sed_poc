@@ -7,22 +7,20 @@ def index(request):
     return render_template('index.html')
 
 
-def home(request):
-    pass
-
-
 def signup(request):
     if request.method == "POST":
         user_service.signup_service(**request.form_data)
-        return Response.redirect('/')
+        return Response.redirect('/signin')
     return Response(render_template('/auth/signup.html'))
 
 
 def signin(request):
-    pass
+    if request.method == "POST":
+        print(request.form_data)
+    return Response(render_template('/auth/signin.html'))
 
 
-def all_products(request):
+def get_products(request):
     template = '/product/products.html'
     if request.query_string:
         template = '/product/table.html'
@@ -32,7 +30,7 @@ def all_products(request):
     return Response(render_template(template, context={'products': data}))
 
 
-def product(request, key):
+def get_product_by_id(request, key):
     data = product_service.get_product(key)
     return Response(render_template('/product/detail.html', context={'product': data}))
 
