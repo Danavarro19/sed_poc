@@ -76,7 +76,7 @@ class BaseManager:
             cursor.execute(query, (key,))
             result = cursor.fetchone()
             if result:
-                row_data = dict(zip(self.model_class.fields, result))
+                row_data = dict(zip([self.model_class.primary_key] + self.model_class.fields, result))
                 return self.model_class(**row_data)
             else:
                 return None

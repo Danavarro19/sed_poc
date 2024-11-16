@@ -7,7 +7,7 @@ urls = [
     ('/signup', controller.signup),
     ('/signin', controller.signin),
     ('/product', controller.all_products),
-    ('/product/<key_id>', controller.product)
+    ('/product/<key>', controller.product)
 ]
 
 
