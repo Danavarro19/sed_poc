@@ -3,25 +3,10 @@
 
 {% block content %}
     <h1>Products</h1>
-    <table border="2">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripcion</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
-        </tr>
-       </thead>
-       <tbody>
-           {% for product in products %}
-               <tr>
-                   <td>{{ product.name }}</td>
-                   <td>{{ product.description }}</td>
-                   <td>{{ product.price }}</td>
-                   <td>{{ product.stock_quantity }}</td>
-               </tr>
-           {% endfor %}
-      </tbody>
-    </table>
-
+    <div id="products_table">
+        {% include 'products_table.html' %}
+    </div>
+    <div>
+        {% include  'products_search.html' %}
+    </div>
 {% endblock %}

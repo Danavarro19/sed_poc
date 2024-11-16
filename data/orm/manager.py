@@ -1,3 +1,11 @@
+class Filter:
+    def __init__(self, *, field, value, criteria="=", logical_operator=None):
+        self.field = field
+        self.value = value
+        self.criteria = criteria
+        self.logical_operator = logical_operator
+
+
 class BaseManager:
     connection = None
 
@@ -29,25 +37,37 @@ class BaseManager:
         fields_format = ", ".join(field_names)
         query = f"SELECT {fields_format} FROM {self.model_class.table_name}"
 
+        params = []
         if filter_by:
-            field, value = filter_by
-            query = f"{query} WHERE {field}={value}"
+            filter_clauses = []
 
-        # Execute query
+            for current_filter in filter_by:
+                filter_clauses.append(f"{current_filter.field} {current_filter.criteria} %s")
+                params.append(current_filter.value)
+                if current_filter.logical_operator is None:
+                    break
+                else:
+                    filter_clauses.append(current_filter.logical_operator)
+
+            query += " WHERE " + " ".join(filter_clauses)
+
         cursor = self._get_cursor()
-        cursor.execute(query)
+        try:
+            cursor.execute(query, params)
 
-        model_objects = list()
-        is_fetching_completed = False
-        while not is_fetching_completed:
-            result = cursor.fetchmany(size=chunk_size)
-            for row_values in result:
-                keys, values = field_names, row_values
-                row_data = dict(zip(keys, values))
-                model_objects.append(self.model_class(**row_data))
-            is_fetching_completed = len(result) < chunk_size
+            model_objects = []
+            while True:
+                result = cursor.fetchmany(size=chunk_size)
+                if not result:
+                    break
 
-        return model_objects
+                for row_values in result:
+                    row_data = dict(zip(field_names or self.model_class.fields, row_values))
+                    model_objects.append(self.model_class(**row_data))
+
+            return model_objects
+        finally:
+            cursor.close()
 
     def select_by_pk(self, key):
         query = f"SELECT * FROM {self.model_class.table_name} WHERE {self.model_class.primary_key} = %s"

@@ -1,5 +1,6 @@
+from data.orm.manager import Filter
 from view.template import render_template
-from service import get_all_products, signup_service
+from service import get_products,  signup_service
 from pprint import pprint 
 
 
@@ -23,8 +24,18 @@ def signin(request):
 
 
 def all_products(request):
-    data = get_all_products()
-    return render_template('products.html', context={'products': data})
+    template = 'products.html'
+    if request.query_string:
+        print(request.query_string)
+        template = 'products_table.html'
+        data = get_products(
+            filter_by=[
+                Filter(field='name', value=f"%{request.query_string['name']}%", criteria="ILIKE")
+            ]
+        )
+    else:
+        data = get_products()
+    return render_template(template, context={'products': data})
 
 
 def product(request, key):
