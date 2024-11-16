@@ -16,7 +16,13 @@ def signup(request):
 
 def signin(request):
     if request.method == "POST":
-        print(request.form_data)
+        try:
+            user_service.signin_service(**request.form_data)
+        except :
+            return Response.redirect('/signin')
+
+        return Response.redirect('/products')
+
     return Response(render_template('/auth/signin.html'))
 
 

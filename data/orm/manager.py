@@ -69,8 +69,8 @@ class BaseManager:
         finally:
             cursor.close()
 
-    def select_by_pk(self, key):
-        query = f"SELECT * FROM {self.model_class.table_name} WHERE {self.model_class.primary_key} = %s"
+    def select_by_field(self, field, key):
+        query = f"SELECT * FROM {self.model_class.table_name} WHERE {field} = %s"
         cursor = self._get_cursor()
         try:
             cursor.execute(query, (key,))
@@ -82,6 +82,9 @@ class BaseManager:
                 return None
         finally:
             cursor.close()
+
+    def select_by_pk(self, key):
+        return self.select_by_field(self.model_class.primary_key, key)
 
     def insert(self, instance):
         fields_format = ", ".join(instance.fields)
