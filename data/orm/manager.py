@@ -3,7 +3,7 @@ class BaseManager:
 
     @classmethod
     def set_connection(cls, connection):
-        connection.autocommit = True  # https://www.psycopg.org/docs/connection.html#connection.commit
+        connection.autocommit = True
         cls.connection = connection
 
     @classmethod
@@ -13,18 +13,20 @@ class BaseManager:
     @classmethod
     def _execute_query(cls, query, params=None):
         cursor = cls._get_cursor()
-        cursor.execute(query, params)
+        try:
+            cursor.execute(query, params)
+        finally:
+            cursor.close()
 
     def __init__(self, model_class):
         self.model_class = model_class
 
     def select(self, *, field_names=None, filter_by=None, chunk_size=2000):
         # Build SELECT query
-        if field_names:
-            fields_format = ", ".join(field_names)
-        else:
-            fields_format = "*"
+        if field_names is None:
+            field_names = [self.model_class.primary_key] + self.model_class.fields
 
+        fields_format = ", ".join(field_names)
         query = f"SELECT {fields_format} FROM {self.model_class.table_name}"
 
         if filter_by:
@@ -47,23 +49,43 @@ class BaseManager:
 
         return model_objects
 
-    def update(self, new_data: dict):
-        # Build UPDATE query and params
+    def select_by_pk(self, key):
+        query = f"SELECT * FROM {self.model_class.table_name} WHERE {self.model_class.primary_key} = %s"
+        cursor = self._get_cursor()
+        try:
+            cursor.execute(query, (key,))
+            result = cursor.fetchone()
+            if result:
+                row_data = dict(zip(self.model_class.fields, result))
+                return self.model_class(**row_data)
+            else:
+                return None
+        finally:
+            cursor.close()
+
+    def insert(self, instance):
+        fields_format = ", ".join(instance.fields)
+        values_format = ", ".join(["%s"] * len(instance.fields))
+        query = f"INSERT INTO {instance.table_name} ({fields_format}) VALUES ({values_format})"
+        params = [getattr(instance, field) for field in instance.fields]
+        self._execute_query(query, params)
+
+    def update(self, key, new_data: dict):
         field_names = new_data.keys()
         placeholder_format = ", ".join(
             [f"{field_name} = %s" for field_name in field_names]
         )
         query = (
-            f"UPDATE {self.model_class.table_name} SET {placeholder_format}"
+            f"UPDATE {self.model_class.table_name} SET {placeholder_format}WHERE {self.model_class.primary_key} = %s"
         )
-        params = list(new_data.values())
+        params = list(new_data.values()) + [key]
 
         # Execute query
         self._execute_query(query, params)
 
     def delete(self, key):
         # Build DELETE query
-        query = f"DELETE FROM {self.model_class.table_name} "
+        query = f"DELETE FROM {self.model_class.table_name} WHERE {self.model_class.primary_key} = %s"
 
         # Execute query
-        self._execute_query(query)
+        self._execute_query(query, key)
