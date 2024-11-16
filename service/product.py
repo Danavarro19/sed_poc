@@ -16,5 +16,10 @@ def get_product(key):
     return Product.objects.select_by_pk(key)
 
 
+def add_product(data):
+    product = Product(**data)
+    product.save()
+
+
 def delete_product(key):
     Product.objects.delete(key)

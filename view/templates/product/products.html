@@ -4,8 +4,10 @@
 {% block content %}
     <h1>Productos</h1>
     <div>
+        <a href="/products/new">Agregar producto</a>
         {% include '/product/search.html' %}
     </div>
+
     <div id="products-table">
         {% include '/product/table.html' %}
     </div>
