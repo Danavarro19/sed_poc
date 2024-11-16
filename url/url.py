@@ -6,8 +6,9 @@ urls = [
     ('/home', controller.home),
     ('/signup', controller.signup),
     ('/signin', controller.signin),
-    ('/product', controller.all_products),
-    ('/product/<key>', controller.product)
+    ('/products', controller.all_products),
+    ('/products/<key>', controller.product),
+    ('/products/<key>/delete', controller.delete_product),
 ]
 
 

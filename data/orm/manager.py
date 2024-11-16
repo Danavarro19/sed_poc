@@ -108,4 +108,4 @@ class BaseManager:
         query = f"DELETE FROM {self.model_class.table_name} WHERE {self.model_class.primary_key} = %s"
 
         # Execute query
-        self._execute_query(query, key)
+        self._execute_query(query, (key,))

@@ -14,3 +14,7 @@ def get_products(filter_by=None):
 
 def get_product(key):
     return Product.objects.select_by_pk(key)
+
+
+def delete_product(key):
+    Product.objects.delete(key)

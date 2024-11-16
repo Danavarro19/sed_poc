@@ -1,6 +1,6 @@
+from server.response import Response
 from view.template import render_template
-from service import get_products,  get_product, signup_service
-from pprint import pprint 
+from service import product as product_service, user as user_service
 
 
 def index(request):
@@ -13,9 +13,9 @@ def home(request):
 
 def signup(request):
     if request.method == "POST":
-        signup_service(**request.form_data)
-        return render_template('index.html')
-    return render_template('signup.html')
+        user_service.signup_service(**request.form_data)
+        return Response.redirect('/')
+    return Response(render_template('/auth/signup.html'))
 
 
 def signin(request):
@@ -26,12 +26,17 @@ def all_products(request):
     template = '/product/products.html'
     if request.query_string:
         template = '/product/table.html'
-        data = get_products(request.query_string)
+        data = product_service.get_products(request.query_string)
     else:
-        data = get_products()
-    return render_template(template, context={'products': data})
+        data = product_service.get_products()
+    return Response(render_template(template, context={'products': data}))
 
 
 def product(request, key):
-    data = get_product(key)
-    return render_template('/product/detail.html', context={'product': data})
+    data = product_service.get_product(key)
+    return Response(render_template('/product/detail.html', context={'product': data}))
+
+
+def delete_product(request, key):
+    product_service.delete_product(key)
+    return Response.redirect('/products')
