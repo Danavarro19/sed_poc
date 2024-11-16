@@ -1,5 +1,5 @@
 from view.template import render_template
-from service import get_all_products
+from service import get_all_products, signup_service
 from pprint import pprint 
 
 
@@ -13,8 +13,7 @@ def home(request):
 
 def signup(request):
     if request.method == "POST":
-        data = request.form_data
-        pprint(data)
+        signup_service(**request.form_data)
         return render_template('index.html')
     return render_template('signup.html')
 
