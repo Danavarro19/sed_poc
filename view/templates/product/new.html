@@ -17,7 +17,15 @@
             <label for="stock_quantity" class="form-label">Cantidad:</label>
             <input type="text" id="stock_quantity" name="stock_quantity" class="form-control" required>
 
-            <input type="submit" value="Agregar" class="mt-2 btn btn-primary">
+            <div class="d-flex flex-row align-items-center mt-2">
+                <div class="me-2">
+                    <input type="submit" value="Agregar" class="btn btn-primary">
+                </div>
+                <div>
+                    <a href="/products" class="btn btn-secondary">Back to Product List</a>
+                </div>
+
+            </div>
         </form>
     </div>
 {% endblock %}
