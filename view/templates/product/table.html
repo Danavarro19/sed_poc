@@ -1,6 +1,6 @@
 {% if products %}
-    <table border="2">
-        <thead>
+    <div class="w-50">
+        <table class="table table-striped table-hover"> <thead>
         <tr>
             <th>Nombre</th>
             <th>Descripcion</th>
@@ -8,17 +8,18 @@
             <th>Cantidad</th>
         </tr>
         </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td><a href="/products/{{ product.product_id }}">{{ product.name }}</a></td>
-                <td>{{ product.description }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.stock_quantity }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td><a href="/products/{{ product.product_id }}">{{ product.name }}</a></td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.stock_quantity }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% else %}
     <h1>No results</h1>
 {% endif %}

@@ -3,9 +3,14 @@
 
 {% block content %}
     <h1>Productos</h1>
-    <div>
-        <a href="/products/new">Agregar producto</a>
-        {% include '/product/search.html' %}
+    <div class="d-flex flex-row align-items-center p-1">
+        <div class="m-2">
+            {% include '/product/search.html' %}
+        </div>
+        <div class="m-2">
+            <a class="btn btn-primary" href="/products/new">Agregar producto</a>
+        </div>
+
     </div>
 
     <div id="products-table">
