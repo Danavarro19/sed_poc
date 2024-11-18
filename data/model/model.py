@@ -13,8 +13,7 @@ class User(BaseModel):
     fields = ['username', 'password', 'email']
 
 
-if __name__ == '__main__':
-    from pprint import pprint
-
-    data = User.objects.select(field_names=['username', 'email'])
-    pprint(data)
+class Session(BaseModel):
+    table_name = 'session'
+    primary_key = 'session_id'
+    fields = ['user_id', 'session_token', 'created_at', 'expires_at']

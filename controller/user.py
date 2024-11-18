@@ -17,11 +17,11 @@ def signup(request):
 def signin(request):
     if request.method == "POST":
         try:
-            user_service.signin_service(**request.form_data)
-        except :
+            token = user_service.signin_service(**request.form_data)
+        except Exception as e:
+            print(e)
             return Response.redirect('/signin')
-
-        return Response.redirect('/products')
+        return Response.redirect('/products', cookies={'session_token': token})
 
     return Response(render_template('/auth/signin.html'))
 

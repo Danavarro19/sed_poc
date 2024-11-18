@@ -1,3 +1,5 @@
+from http.cookies import SimpleCookie
+
 
 class Request:
     def __init__(self, environ):
@@ -11,6 +13,7 @@ class Request:
         self.remote_addr = environ.get('REMOTE_ADDR', '')
         self.scheme = environ.get('wsgi.url_scheme', 'http')
         self.content_type = environ.get('CONTENT_TYPE', '')
+        self.cookies = self._get_cookies()
 
     def _get_headers(self):
         headers = {}
@@ -34,6 +37,9 @@ class Request:
                 data[field] = value[0]
         return data
 
+    def _get_cookies(self):
+        cookies = SimpleCookie(self.environ.get('HTTP_COOKIE', ''))
+        return {key: morsel.value for key, morsel in cookies.items()}
 
     @property
     def form_data(self):
@@ -46,3 +52,8 @@ class Request:
                 data[field] = value[0]
 
         return data
+
+    @property
+    def is_authenticated(self):
+        return 'session_token' in self.cookies
+
