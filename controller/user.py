@@ -1,18 +1,24 @@
 from controller.decorators import requires_authentication
 from server.response import Response
-from view.template import render_template
 from service import user as user_service
 
 
 def index(request):
-    return render_template('index.html')
+
+    return Response.render(
+        request,
+        template_name='index.html'
+    )
 
 
 def signup(request):
     if request.method == "POST":
         user_service.signup_service(**request.form_data)
         return Response.redirect('/signin')
-    return Response(render_template('/auth/signup.html'))
+    return Response.render(
+        request,
+        template_name='/auth/signup.html'
+    )
 
 
 def signin(request):
@@ -24,7 +30,10 @@ def signin(request):
             return Response.redirect('/signin')
         return Response.redirect('/products', cookies={'session_token': token})
 
-    return Response(render_template('/auth/signin.html'))
+    return Response.render(
+        request,
+        template_name='/auth/signin.html'
+    )
 
 
 @requires_authentication

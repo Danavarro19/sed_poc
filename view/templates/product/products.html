@@ -8,14 +8,9 @@
             <div class="m-1">
                 {% include '/product/search.html' %}
             </div>
-            {% if user.is_admin %}
+            {% if user.is_super %}
                 <div class="m-1">
                     <a class="btn btn-primary" href="/products/new">Agregar producto</a>
-                </div>
-            {% endif %}
-            {% if user.is_super %}
-                <div class="">
-                    <a class="btn btn-primary" href="">Usuarios</a>
                 </div>
             {% endif %}
         </div>

@@ -14,7 +14,7 @@ def products(request):
             data = product_service.get_products()
         return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
-        if not request.user.is_admin:
+        if not request.user.is_super:
             return Response.redirect('/products')  # sustituir por unauthorized
 
         product_service.add_product(request.form_data)
@@ -23,7 +23,7 @@ def products(request):
 
 @requires_authentication
 def new_product(request):
-    if not request.user.is_admin:
+    if not request.user.is_super:
         return Response.redirect('/products')  # sustituir por unauthorized
 
     return Response.render(
@@ -48,7 +48,7 @@ def get_product(request, key):
 
 @requires_authentication
 def delete_product(request, key):
-    if request.user.is_admin:
+    if request.user.is_super:
         product_service.delete_product(key)
 
     return Response.redirect('/products')  # sustitui por unauthorized
