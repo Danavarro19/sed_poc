@@ -1,8 +1,10 @@
+from controller.decorators import requires_authentication
 from server.response import Response
 from view.template import render_template
 from service import product as product_service
 
 
+@requires_authentication
 def products(request):
     if request.method == "GET":
         template = '/product/products.html'
@@ -17,15 +19,18 @@ def products(request):
         return Response.redirect('/products')
 
 
+@requires_authentication
 def new_product(request):
     return Response(render_template('/product/new.html'))
 
 
+@requires_authentication
 def get_product_by_id(request, key):
     data = product_service.get_product(key)
     return Response(render_template('/product/detail.html', context={'product': data}))
 
 
+@requires_authentication
 def delete_product(request, key):
     product_service.delete_product(key)
     return Response.redirect('/products')

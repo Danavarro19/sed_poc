@@ -1,3 +1,4 @@
+from service.user import validate_session
 from url import urls
 from pprint import pprint
 
@@ -20,6 +21,9 @@ class Server:
         pprint(environ)
         request = Request(environ)
         handler, kwargs = self.router.get_handler(request.path)
+
+        if request.is_authenticated:
+            request.set_user(validate_session(request.get_cookie("session_token")))
 
         if handler:
             try:

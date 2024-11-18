@@ -69,8 +69,12 @@ class BaseManager:
         finally:
             cursor.close()
 
-    def select_by_field(self, field, key):
-        query = f"SELECT * FROM {self.model_class.table_name} WHERE {field} = %s"
+    def select_by_field(self, field, key, field_names=None):
+        if field_names is None:
+            field_names = [self.model_class.primary_key] + self.model_class.fields
+
+        fields_format = ", ".join(field_names)
+        query = f"SELECT {fields_format} FROM {self.model_class.table_name} WHERE {field} = %s"
         cursor = self._get_cursor()
         try:
             cursor.execute(query, (key,))

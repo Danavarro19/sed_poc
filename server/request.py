@@ -14,6 +14,7 @@ class Request:
         self.scheme = environ.get('wsgi.url_scheme', 'http')
         self.content_type = environ.get('CONTENT_TYPE', '')
         self.cookies = self._get_cookies()
+        self._user = None
 
     def _get_headers(self):
         headers = {}
@@ -41,6 +42,9 @@ class Request:
         cookies = SimpleCookie(self.environ.get('HTTP_COOKIE', ''))
         return {key: morsel.value for key, morsel in cookies.items()}
 
+    def get_cookie(self, key):
+        return self.cookies.get(key)
+
     @property
     def form_data(self):
         from urllib.parse import parse_qs
@@ -57,3 +61,9 @@ class Request:
     def is_authenticated(self):
         return 'session_token' in self.cookies
 
+    @property
+    def user(self):
+        return self._user
+
+    def set_user(self, user):
+        self._user = user
