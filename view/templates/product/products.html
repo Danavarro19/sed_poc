@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}products{% endblock %}
+
+{% block content %}
+    <h1>Productos</h1>
+    <div class="d-flex flex-row align-items-center p-1">
+        <div class="m-1">
+            {% include '/product/search.html' %}
+        </div>
+        <div class="m-1">
+            <a class="btn btn-primary" href="/products/new">Agregar producto</a>
+        </div>
+
+    </div>
+
+    <div id="products-table" class="table-responsive w-75" style="max-height: 750px">
+        {% include '/product/table.html' %}
+    </div>
+{% endblock %}

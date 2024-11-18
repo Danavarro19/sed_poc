@@ -1,13 +1,14 @@
-from controller import controller
+from controller import product, user
 
 urls = [
-    ('/', controller.index),
-    ('/index', controller.index),
-    ('/home', controller.home),
-    ('/signup', controller.signup),
-    ('/signin', controller.signin),
-    ('/product', controller.all_products),
-    ('/product/<key_id>', controller.product)
+    ('/', user.index),
+    ('/index', user.index),
+    ('/signup', user.signup),
+    ('/signin', user.signin),
+    ('/products', product.products),
+    ('/products/new', product.new_product),
+    ('/products/<key>', product.get_product_by_id),
+    ('/products/<key>/delete', product.delete_product),
 ]
 
 

@@ -1,0 +1,44 @@
+from http.cookies import SimpleCookie
+
+
+class Response:
+    def __init__(self, body='', status='200 OK', headers=None):
+        self.body = body
+        self.status = status
+        self.headers = headers or [('Content-Type', 'text/html; charset=utf-8')]
+        self.cookies = SimpleCookie()
+
+    def set_header(self, name, value):
+        self.headers.append((name, value))
+
+    def set_cookie(self, key, value, **kwargs):
+        self.cookies[key] = value
+        for k, v in kwargs.items():
+            self.cookies[key][k] = v
+
+    def delete_cookie(self, key):
+        self.set_cookie(key, '', expires='Thu, 01 Jan 1970 00:00:00 GMT')
+
+    @classmethod
+    def redirect(cls, location, status='302 Found', headers=None, cookies=None):
+        response = cls(body='', status=status)
+        response.set_header('Location', location)
+        if headers:
+            for header, value in headers:
+                response.set_header(header, value)
+        if cookies:
+            for key, value in cookies.items():
+                response.set_cookie(key, value)
+        return response
+
+    def wsgi_response(self, start_response):
+        for morsel in self.cookies.values():
+            self.set_header('Set-Cookie', morsel.OutputString())
+
+        start_response(self.status, self.headers)
+        if isinstance(self.body, str):
+            return [self.body.encode('utf-8')]
+        elif isinstance(self.body, bytes):
+            return [self.body]
+        else:
+            return [b'Invalid response type']

@@ -2,6 +2,7 @@ from url import urls
 from pprint import pprint
 
 from .request import Request
+from .response import Response
 from .router import Router
 
 
@@ -21,9 +22,6 @@ class Server:
         handler, kwargs = self.router.get_handler(request.path)
 
         if handler:
-            status = '200 OK'
-            headers = [('Content-type', 'text/html; charset=utf-8')]
-            start_response(status, headers)
             try:
                 if kwargs:
                     response = handler(request, **kwargs)
@@ -31,15 +29,19 @@ class Server:
                     response = handler(request)
             except TypeError:
                 response = handler(request)
-            if isinstance(response, str):
-                return [response.encode('utf-8')]
+
+            if isinstance(response, Response):
+                return response.wsgi_response(start_response)
+            elif isinstance(response, str):
+                response_obj = Response(body=response)
+                return response_obj.wsgi_response(start_response)
             else:
-                return [b'Invalid response type']
+                # Handle unexpected response types
+                error_response = Response(body='500 Internal Server Error', status='500 Internal Server Error')
+                return error_response.wsgi_response(start_response)
         else:
-            status = '404 Not Found'
-            headers = [('Content-type', 'text/html; charset=utf-8')]
-            start_response(status, headers)
-            return [b'404 Not Found']
+            not_found_response = Response(body='404 Not Found', status='404 Not Found')
+            return not_found_response.wsgi_response(start_response)
 
 
 

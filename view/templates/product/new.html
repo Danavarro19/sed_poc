@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}nuevo producto{% endblock %}
+
+{% block content %}
+    <h1>Nuevo producto</h1>
+    <div class="w-25">
+        <form action="/products" method="post">
+            <label for="name" class="form-label">Nombre:</label>
+            <input type="text" id="name" name="name" class="form-control" required autofocus>
+
+            <label for="description" class="form-label">Descripcion:</label>
+            <input type="text" id="description" name="description" class="form-control" required>
+
+            <label for="price" class="form-label">Precio:</label>
+            <input type="text" id="price" name="price" class="form-control" required>
+
+            <label for="stock_quantity" class="form-label">Cantidad:</label>
+            <input type="text" id="stock_quantity" name="stock_quantity" class="form-control" required>
+
+            <div class="d-flex flex-row align-items-center mt-2">
+                <div class="me-2">
+                    <input type="submit" value="Agregar" class="btn btn-primary">
+                </div>
+                <div>
+                    <a href="/products" class="btn btn-secondary">Back to Product List</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,2 +1,1 @@
-from .model import Product
-from .model import User
+from .model import User, Session, Product
