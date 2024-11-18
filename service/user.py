@@ -34,5 +34,5 @@ def validate_session(token):
     session = Session.objects.select_by_field("session_token", token)
     if not session or session.revoked:
         return None
-    user = User.objects.select_by_field("user_id", session.user_id, field_names=['username', 'email'])
+    user = User.objects.select_by_pk(session.user_id, field_names=['username', 'email'])
     return user

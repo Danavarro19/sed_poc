@@ -40,7 +40,6 @@ class Server:
                 response_obj = Response(body=response)
                 return response_obj.wsgi_response(start_response)
             else:
-                # Handle unexpected response types
                 error_response = Response(body='500 Internal Server Error', status='500 Internal Server Error')
                 return error_response.wsgi_response(start_response)
         else:

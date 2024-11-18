@@ -7,7 +7,7 @@ urls = [
     ('/signin', user.signin),
     ('/products', product.products),
     ('/products/new', product.new_product),
-    ('/products/<key>', product.get_product_by_id),
+    ('/products/<key>', product.get_product),
     ('/products/<key>/delete', product.delete_product),
 ]
 

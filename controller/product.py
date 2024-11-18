@@ -13,7 +13,7 @@ def products(request):
             data = product_service.get_products(request.query_string)
         else:
             data = product_service.get_products()
-        return Response(render_template(template, context={'products': data}))
+        return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
         product_service.add_product(request.form_data)
         return Response.redirect('/products')
@@ -21,13 +21,20 @@ def products(request):
 
 @requires_authentication
 def new_product(request):
-    return Response(render_template('/product/new.html'))
+    return Response.render(
+        request,
+        template_name='/product/new.html'
+    )
 
 
 @requires_authentication
-def get_product_by_id(request, key):
+def get_product(request, key):
     data = product_service.get_product(key)
-    return Response(render_template('/product/detail.html', context={'product': data}))
+    return Response.render(
+        request,
+        template_name='/product/detail.html',
+        context={'product': data}
+    )
 
 
 @requires_authentication

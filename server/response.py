@@ -1,5 +1,7 @@
 from http.cookies import SimpleCookie
 
+from view.template import render_template
+
 
 class Response:
     def __init__(self, body='', status='200 OK', headers=None):
@@ -30,6 +32,14 @@ class Response:
             for key, value in cookies.items():
                 response.set_cookie(key, value)
         return response
+
+    @classmethod
+    def render(cls, request, *, template_name, context=None):
+        if context is None:
+            context = {'user': request.user}
+        else:
+            context['user'] = request.user
+        return cls(body=render_template(template_name, context=context))
 
     def wsgi_response(self, start_response):
         for morsel in self.cookies.values():

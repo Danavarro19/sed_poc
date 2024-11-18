@@ -80,15 +80,15 @@ class BaseManager:
             cursor.execute(query, (key,))
             result = cursor.fetchone()
             if result:
-                row_data = dict(zip([self.model_class.primary_key] + self.model_class.fields, result))
+                row_data = dict(zip(field_names, result))
                 return self.model_class(**row_data)
             else:
                 return None
         finally:
             cursor.close()
 
-    def select_by_pk(self, key):
-        return self.select_by_field(self.model_class.primary_key, key)
+    def select_by_pk(self, key, field_names=None):
+        return self.select_by_field(self.model_class.primary_key, key, field_names=field_names)
 
     def insert(self, instance):
         fields_format = ", ".join(instance.fields)
