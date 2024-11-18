@@ -1,6 +1,5 @@
 from controller.decorators import requires_authentication
 from server.response import Response
-from view.template import render_template
 from service import product as product_service
 
 
@@ -15,12 +14,18 @@ def products(request):
             data = product_service.get_products()
         return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
+        if not request.user.is_admin:
+            return Response.redirect('/products')  # sustituir por unauthorized
+
         product_service.add_product(request.form_data)
         return Response.redirect('/products')
 
 
 @requires_authentication
 def new_product(request):
+    if not request.user.is_admin:
+        return Response.redirect('/products')  # sustituir por unauthorized
+
     return Response.render(
         request,
         template_name='/product/new.html'
@@ -29,7 +34,11 @@ def new_product(request):
 
 @requires_authentication
 def get_product(request, key):
-    data = product_service.get_product(key)
+    try:
+        data = product_service.get_product(key)
+    except Exception as e:
+        print(e)
+        return Response.redirect('/products')  # sustituir por not found
     return Response.render(
         request,
         template_name='/product/detail.html',
@@ -39,5 +48,7 @@ def get_product(request, key):
 
 @requires_authentication
 def delete_product(request, key):
-    product_service.delete_product(key)
-    return Response.redirect('/products')
+    if request.user.is_admin:
+        product_service.delete_product(key)
+
+    return Response.redirect('/products')  # sustitui por unauthorized

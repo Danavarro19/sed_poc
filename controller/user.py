@@ -1,3 +1,4 @@
+from controller.decorators import requires_authentication
 from server.response import Response
 from view.template import render_template
 from service import user as user_service
@@ -24,4 +25,11 @@ def signin(request):
         return Response.redirect('/products', cookies={'session_token': token})
 
     return Response(render_template('/auth/signin.html'))
+
+
+@requires_authentication
+def signout(request):
+    token = request.get_cookie('session_token')
+    user_service.signout_service(token)
+    return Response.redirect('/')
 

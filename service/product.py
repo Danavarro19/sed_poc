@@ -13,7 +13,11 @@ def get_products(filter_by=None):
 
 
 def get_product(key):
-    return Product.objects.select_by_pk(key)
+    product = Product.objects.select_by_pk(key)
+    if not product:
+        raise Exception('Product not found')
+
+    return product
 
 
 def add_product(data):

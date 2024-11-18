@@ -6,6 +6,7 @@ import bcrypt
 
 def signup_service(**data):
     data['password'] = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    data['role'] = 'user'
     user = User(**data)
     user.save()
 
@@ -30,9 +31,15 @@ def signin_service(username, password):
     return token
 
 
+def signout_service(token):
+    date_format = "%Y-%m-%d %H:%M:%S.%f"
+    session = Session.objects.select_by_field("session_token", token)
+    Session.objects.update(session.session_id, {'expires_at': datetime.now().strftime(date_format)})
+
+
 def validate_session(token):
     session = Session.objects.select_by_field("session_token", token)
     if not session or session.revoked:
         return None
-    user = User.objects.select_by_pk(session.user_id, field_names=['username', 'email'])
+    user = User.objects.select_by_pk(session.user_id, field_names=['username', 'email', 'role'])
     return user

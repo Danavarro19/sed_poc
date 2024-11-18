@@ -5,6 +5,7 @@ urls = [
     ('/index', user.index),
     ('/signup', user.signup),
     ('/signin', user.signin),
+    ('/signout', user.signout),
     ('/products', product.products),
     ('/products/new', product.new_product),
     ('/products/<key>', product.get_product),

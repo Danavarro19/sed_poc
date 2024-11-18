@@ -3,16 +3,23 @@
 
 {% block content %}
     <h1>Productos</h1>
-    <div class="d-flex flex-row align-items-center p-1">
-        <div class="m-1">
-            {% include '/product/search.html' %}
+    <div class="d-flex flex-row">
+        <div class="d-flex flex-row align-items-center p-1">
+            <div class="m-1">
+                {% include '/product/search.html' %}
+            </div>
+            {% if user.is_admin %}
+                <div class="m-1">
+                    <a class="btn btn-primary" href="/products/new">Agregar producto</a>
+                </div>
+            {% endif %}
+            {% if user.is_super %}
+                <div class="">
+                    <a class="btn btn-primary" href="">Usuarios</a>
+                </div>
+            {% endif %}
         </div>
-        <div class="m-1">
-            <a class="btn btn-primary" href="/products/new">Agregar producto</a>
-        </div>
-
     </div>
-
     <div id="products-table" class="table-responsive" style="max-height: 400px">
         {% include '/product/table.html' %}
     </div>
