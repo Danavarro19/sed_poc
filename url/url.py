@@ -10,6 +10,7 @@ urls = [
     ('/products/new', product.new_product),
     ('/products/<key>', product.get_product),
     ('/products/<key>/delete', product.delete_product),
+    ('/products/<key>/update', product.update_product),
 ]
 
 

@@ -27,3 +27,7 @@ def add_product(data):
 
 def delete_product(key):
     Product.objects.delete(key)
+
+
+def update_product(key, data):
+    Product.objects.update(key, data)
