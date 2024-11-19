@@ -43,7 +43,7 @@ class Server:
                 error_response = Response(body='500 Internal Server Error', status='500 Internal Server Error')
                 return error_response.wsgi_response(start_response)
         else:
-            not_found_response = Response(body='404 Not Found', status='404 Not Found')
+            not_found_response = Response.not_found(request)
             return not_found_response.wsgi_response(start_response)
 
 

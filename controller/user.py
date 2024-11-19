@@ -13,7 +13,12 @@ def index(request):
 
 def signup(request):
     if request.method == "POST":
-        user_service.signup_service(**request.form_data)
+        try:
+            user_service.signup_service(**request.form_data)
+        except Exception as e:
+            print(e)
+            return Response.redirect('/signup')
+
         return Response.redirect('/signin')
     return Response.render(
         request,
@@ -24,11 +29,23 @@ def signup(request):
 def signin(request):
     if request.method == "POST":
         try:
-            token = user_service.signin_service(**request.form_data)
+            token, expires_at = user_service.signin_service(**request.form_data)
         except Exception as e:
             print(e)
             return Response.redirect('/signin')
-        return Response.redirect('/products', cookies={'session_token': token})
+
+        date_format = "%a, %d %b %Y %H:%M:%S GMT"
+        response = Response.redirect('/products')
+        response.set_cookie(
+            'session_token',
+            token,
+            expires=expires_at.strftime(date_format),
+            path='/',
+            HttpOnly=True,
+            Secure=True,
+            SameSite='Strict',
+        )
+        return response
 
     return Response.render(
         request,
@@ -40,5 +57,16 @@ def signin(request):
 def signout(request):
     token = request.get_cookie('session_token')
     user_service.signout_service(token)
-    return Response.redirect('/')
+    response = Response.redirect('/')
+    response.set_cookie(
+        'session_token',
+        '',
+        expires=0,
+        path='/',
+        HttpOnly=True,
+        Secure=True,
+        SameSite='strict'
+    )
+    return response
+
 

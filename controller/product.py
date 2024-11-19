@@ -15,16 +15,20 @@ def products(request):
         return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
         if not request.user.is_super:
-            return Response.redirect('/products')  # sustituir por unauthorized
+            return Response.unauthorized(request)
 
-        product_service.add_product(request.form_data)
+        try:
+            product_service.add_product(request.form_data)
+        except Exception as e:
+            print(e)
+            return Response.redirect('/products/new')
         return Response.redirect('/products')
 
 
 @requires_authentication
 def new_product(request):
     if not request.user.is_super:
-        return Response.redirect('/products')  # sustituir por unauthorized
+        return Response.unauthorized(request)
 
     return Response.render(
         request,
@@ -38,7 +42,7 @@ def get_product(request, key):
         data = product_service.get_product(key)
     except Exception as e:
         print(e)
-        return Response.redirect('/products')  # sustituir por not found
+        return Response.not_found(request)
     return Response.render(
         request,
         template_name='/product/detail.html',
@@ -50,5 +54,6 @@ def get_product(request, key):
 def delete_product(request, key):
     if request.user.is_super:
         product_service.delete_product(key)
+        return Response.redirect('/products')
 
-    return Response.redirect('/products')  # sustitui por unauthorized
+    return Response.unauthorized(request)
