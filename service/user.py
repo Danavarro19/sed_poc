@@ -83,7 +83,10 @@ def get_users():
     return User.objects.select(field_names=['user_id', 'username', 'email', 'role'], filter_by=filters)
 
 
-def update_user(key, data):
+def update_user_role(key, data):
+    if len(data.values()) > 1 or list(data.keys())[0] != 'role':
+        raise Exception("Invalid data")
+
     if data['role'] not in ['admin', 'user']:
         raise Exception("Invalid role")
     User.objects.update(key, data)

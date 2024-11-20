@@ -34,7 +34,7 @@ def update_user(request, key):
         return Response.redirect('/users')
 
     try:
-        user_service.update_user(key, request.form_data)
+        user_service.update_user_role(key, request.form_data)
     except Exception as e:
         print(e)
     return Response.redirect('/users')
