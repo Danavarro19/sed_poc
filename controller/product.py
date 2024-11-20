@@ -15,7 +15,7 @@ def products(request):
             data = product_service.get_products()
         return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
-        if not request.user.is_super:
+        if not request.user.is_admin:
             return Response.unauthorized(request)
 
         try:
@@ -28,7 +28,7 @@ def products(request):
 
 @requires_authentication
 def new_product(request):
-    if not request.user.is_super:
+    if not request.user.is_admin:
         return Response.unauthorized(request)
 
     return Response.render(

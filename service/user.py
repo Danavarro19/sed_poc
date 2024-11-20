@@ -6,6 +6,8 @@ import secrets
 import bcrypt
 import re
 
+from data.orm.manager import Filter
+
 
 def signup_service(**data):
     if not is_password_valid(data['password']):
@@ -74,3 +76,14 @@ def is_password_valid(password: str) -> bool:
         return False
 
     return True
+
+
+def get_users():
+    filters = [Filter(field='role', value='super', criteria='!=')]
+    return User.objects.select(field_names=['user_id', 'username', 'email', 'role'], filter_by=filters)
+
+
+def update_user(key, data):
+    if data['role'] not in ['admin', 'user']:
+        raise Exception("Invalid role")
+    User.objects.update(key, data)

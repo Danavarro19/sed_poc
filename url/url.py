@@ -11,6 +11,8 @@ urls = [
     ('/products/<key>', product.get_product),
     ('/products/<key>/delete', product.delete_product),
     ('/products/<key>/update', product.update_product),
+    ('/users', user.users),
+    ('/users/<key>', user.update_user),
 ]
 
 

@@ -1,4 +1,4 @@
-from controller.decorators import requires_authentication
+from controller.decorators import requires_authentication, validate_csrf
 from server.response import Response
 from service import user as user_service
 
@@ -9,6 +9,32 @@ def index(request):
         request,
         template_name='index.html'
     )
+
+
+@requires_authentication
+def users(request):
+    if not request.user.is_super:
+        return Response.unauthorized(request)
+
+    data = user_service.get_users()
+    return Response.render(
+        request,
+        template_name='/users/users.html',
+        context={'users': data}
+    )
+
+
+@requires_authentication
+@validate_csrf
+def update_user(request, key):
+    if not request.user.is_super:
+        return Response.unauthorized(request)
+
+    try:
+        user_service.update_user(key, request.form_data)
+    except Exception as e:
+        print(e)
+    return Response.redirect('/users')
 
 
 def signup(request):
