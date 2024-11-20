@@ -1,9 +1,10 @@
-from controller.decorators import requires_authentication
+from controller.decorators import requires_authentication, validate_csrf
 from server.response import Response
 from service import product as product_service
 
 
 @requires_authentication
+@validate_csrf
 def products(request):
     if request.method == "GET":
         template = '/product/products.html'
@@ -51,6 +52,7 @@ def get_product(request, key):
 
 
 @requires_authentication
+@validate_csrf
 def delete_product(request, key):
     if request.user.is_super:
         product_service.delete_product(key)
@@ -60,6 +62,7 @@ def delete_product(request, key):
 
 
 @requires_authentication
+@validate_csrf
 def update_product(request, key):
     if request.user.is_admin:
         if request.method == "GET":

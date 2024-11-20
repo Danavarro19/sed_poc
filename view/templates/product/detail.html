@@ -23,6 +23,7 @@
         {% if user.is_super%}
             <div class="me-2">
                 <form action="/products/{{ product.product_id }}/delete" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     <button type="submit" onclick="return confirm('Seguro que desea eliminar el producto?');" class="btn btn-danger">Borrar</button>
                 </form>
             </div>

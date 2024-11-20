@@ -28,7 +28,7 @@ class User(BaseModel):
 class Session(BaseModel):
     table_name = 'session'
     primary_key = 'session_id'
-    fields = ['user_id', 'session_token', 'created_at', 'expires_at']
+    fields = ['user_id', 'session_token', 'created_at', 'expires_at', 'csrf_token']
 
     @property
     def revoked(self):

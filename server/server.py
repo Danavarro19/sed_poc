@@ -23,7 +23,9 @@ class Server:
         handler, kwargs = self.router.get_handler(request.path)
 
         if request.is_authenticated:
-            request.set_user(validate_session(request.get_cookie("session_token")))
+            user, session = validate_session(request.get_cookie('session_token'))
+            request.set_user(user)
+            request.set_session(session)
 
         if handler:
             try:

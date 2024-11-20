@@ -15,6 +15,8 @@ class Request:
         self.content_type = environ.get('CONTENT_TYPE', '')
         self.cookies = self._get_cookies()
         self._user = None
+        self._session = None
+        self._form_data = None  # Initialize as None, will be populated on first access
 
     def _get_headers(self):
         headers = {}
@@ -45,17 +47,29 @@ class Request:
     def get_cookie(self, key):
         return self.cookies.get(key)
 
+    # @property
+    # def form_data(self):
+    #     from urllib.parse import parse_qs
+    #     data = parse_qs(self.body.decode('utf-8'))
+    #
+    #     for field, value in data.items():
+    #         if len(value) == 1:
+    #             # noinspection PyTypeChecker
+    #             data[field] = value[0]
+    #
+    #     return data
+
     @property
     def form_data(self):
         from urllib.parse import parse_qs
-        data = parse_qs(self.body.decode('utf-8'))
-
-        for field, value in data.items():
-            if len(value) == 1:
-                # noinspection PyTypeChecker
-                data[field] = value[0]
-
-        return data
+        # Parse and cache form data if not already parsed
+        if self._form_data is None:
+            parsed_data = parse_qs(self.body.decode('utf-8'))
+            for field, value in parsed_data.items():
+                if len(value) == 1:
+                    parsed_data[field] = value[0]  # Simplify single-value lists
+            self._form_data = parsed_data
+        return self._form_data
 
     @property
     def is_authenticated(self):
@@ -67,3 +81,10 @@ class Request:
 
     def set_user(self, user):
         self._user = user
+
+    @property
+    def session(self):
+        return self._session
+
+    def set_session(self, session):
+        self._session = session

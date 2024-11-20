@@ -40,9 +40,10 @@ class Response:
     @classmethod
     def render(cls, request, *, template_name, context=None):
         if context is None:
-            context = {'user': request.user}
+            context = {'user': request.user, 'session': request.session }
         else:
             context['user'] = request.user
+            context['session'] = request.session
         return cls(body=render_template(template_name, context=context))
 
     def wsgi_response(self, start_response):

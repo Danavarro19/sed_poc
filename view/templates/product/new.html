@@ -5,6 +5,7 @@
     <h1>Nuevo producto</h1>
     <div class="w-25">
         <form action="/products" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <label for="name" class="form-label">Nombre:</label>
             <input type="text" id="name" name="name" class="form-control" required autofocus>
 
