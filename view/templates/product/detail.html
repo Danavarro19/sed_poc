@@ -4,11 +4,13 @@
 {% block content %}
     <h1>Detalles</h1>
     <div class="product-details">
-        <p><strong>Codigo:</strong> {{ product.product_id }}</p>
+        <p><strong>Codigo:</strong> {{ product.sku }}</p>
         <p><strong>Nombre:</strong> {{ product.name }}</p>
         <p><strong>Descripcion:</strong> {{ product.description }}</p>
         <p><strong>Precio unitario:</strong> ${{ product.price }}</p>
         <p><strong>Cantidad disponible:</strong> {{ product.stock_quantity }}</p>
+        <p><strong>Peso:</strong> {% if product.weight %}{{ product.weight }}Kg.{% else %} -- {% endif %}</p>
+        <p><strong>Disponibilidad:</strong> {{ "Si" if product.is_available else "No" }}</p>
     </div>
     <div class="d-flex flex-row">
         <div class="me-2">

@@ -20,9 +20,7 @@ def validate_csrf(handler):
 
         csrf_token = None
         if request.form_data:
-            print(request.form_data)
             csrf_token = request.form_data.pop('csrf_token', None)
-            print(request.form_data)
 
         if not csrf_token or csrf_token != request.session.csrf_token:
             return Response.unauthorized(request)

@@ -91,10 +91,11 @@ class BaseManager:
         return self.select_by_field(self.model_class.primary_key, key, field_names=field_names)
 
     def insert(self, instance):
-        fields_format = ", ".join(instance.fields)
-        values_format = ", ".join(["%s"] * len(instance.fields))
+        fields = instance.__dict__.keys()
+        fields_format = ", ".join(fields)
+        values_format = ", ".join(["%s"] * len(fields))
         query = f"INSERT INTO {instance.table_name} ({fields_format}) VALUES ({values_format})"
-        params = [getattr(instance, field) for field in instance.fields]
+        params = [getattr(instance, field) for field in fields]
         self._execute_query(query, params)
 
     def update(self, key, new_data: dict):

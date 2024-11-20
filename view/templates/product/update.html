@@ -7,7 +7,7 @@
         <form action="/products/{{ product.product_id }}/update" method="post">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <label for="name" class="form-label">Nombre:</label>
-            <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}">
+            <input type="text" id="name" name="name" class="form-control" value="{{ product.name }}" autofocus>
 
             <label for="description" class="form-label">Descripcion:</label>
             <input type="text" id="description" name="description" class="form-control" value="{{ product.description }}">
@@ -16,7 +16,18 @@
             <input type="text" id="price" name="price" class="form-control" value="{{ product.price }}">
 
             <label for="stock_quantity" class="form-label">Cantidad disponible:</label>
-            <input type="text" id="stock_quantity" name="stock_quantity" class="form-control" value="{{ product.stock_quantity }}" autofocus>
+            <input type="text" id="stock_quantity" name="stock_quantity" class="form-control" value="{{ product.stock_quantity }}">
+
+            <label for="weight" class="form-label">Peso:</label>
+            <input type="text" id="weight" name="weight" class="form-control" {% if product.weight %}value="{{ product.weight }}{% endif %}">
+
+
+            <label for="is_available" class="form-label">Disponibilidad:</label>
+            <select id="is_available" name="is_available" class="form-control">
+                <option value="true" {% if product.is_available %}selected{% endif %}>Sí</option>
+                <option value="false" {% if not product.is_available %}selected{% endif %}>No</option>
+            </select>
+
 
             <input type="submit" value="Confirmar" class="mt-2 btn btn-primary">
         </form>
