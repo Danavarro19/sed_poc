@@ -20,6 +20,8 @@ class Product(BaseModel):
 
         if not self.is_valid_sku():
             raise Exception('Invalid SKU')
+        sku = getattr(self, 'sku')
+        setattr(self, 'sku', sku.upper())
 
         if not self.is_valid_weight():
             raise Exception('Invalid weight')
@@ -46,7 +48,7 @@ class Product(BaseModel):
 
     def is_valid_sku(self):
         sku = getattr(self, 'sku', '')
-        pattern = r"^[A-Z]{2}[0-9]+$"
+        pattern = r"^[A-Za-z]{2}[0-9]+$"
         return bool(re.match(pattern, sku)) and len(sku) <= 50
 
     def is_valid_weight(self):
