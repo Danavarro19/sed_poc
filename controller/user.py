@@ -30,6 +30,9 @@ def update_user(request, key):
     if not request.user.is_super:
         return Response.unauthorized(request)
 
+    if request.method != 'POST':
+        return Response.redirect('/users')
+
     try:
         user_service.update_user(key, request.form_data)
     except Exception as e:
