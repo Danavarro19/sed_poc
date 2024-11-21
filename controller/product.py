@@ -1,3 +1,4 @@
+import traceback
 from controller.decorators import requires_authentication, validate_csrf
 from server.response import Response
 from service import product as product_service
@@ -18,7 +19,7 @@ def products(request):
         try:
             product_service.add_product(request.form_data)
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             return Response.render(
                 request,
                 template_name='/product/new.html',
@@ -42,8 +43,8 @@ def new_product(request):
 def get_product(request, key):
     try:
         data = product_service.get_product(key)
-    except Exception as e:
-        print(e)
+    except Exception:
+        print(traceback.format_exc())
         return Response.not_found(request)
     return Response.render(
         request,
@@ -77,8 +78,8 @@ def update_product(request, key):
         if request.method == "POST":
             try:
                 product_service.update_product(key, request.form_data)
-            except Exception as e:
-                print(e)
+            except:
+                print(traceback.format_exc())
                 return Response.redirect(f'/products/{key}/update')
             return Response.redirect(f'/products/{key}')
     else:

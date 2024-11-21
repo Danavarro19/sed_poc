@@ -2,6 +2,8 @@ from data.orm import BaseModel
 from datetime import datetime
 import re
 
+from exception import ValidationException
+
 
 class Product(BaseModel):
     table_name = 'product'
@@ -10,24 +12,31 @@ class Product(BaseModel):
 
     def clean(self):
         if not self.is_valid_name():
-            raise Exception('Nombre no valido.')
+            raise ValidationException('Nombre no valido.')
+
+        if not self.is_valid_description():
+            raise ValidationException('Descripcion no valida.')
 
         if not self.is_valid_price():
-            raise Exception('Precio no valido.')
+            raise ValidationException('Precio no valido.')
 
         if not self.is_valid_stock_quantity():
-            raise Exception('Cantidad disponible no valida.')
+            raise ValidationException('Cantidad disponible no valida.')
 
         if not self.is_valid_sku():
-            raise Exception('SKU no valido.')
+            raise ValidationException('SKU no valido.')
         sku = getattr(self, 'sku')
         setattr(self, 'sku', sku.upper())
 
         if not self.is_valid_weight():
-            raise Exception('Peso no valido.')
+            raise ValidationException('Peso no valido.')
 
     def is_valid_name(self):
         name = getattr(self, 'name', '')
+        return bool(name) and len(name) <= 25
+
+    def is_valid_description(self):
+        name = getattr(self, 'description', '')
         return bool(name) and len(name) <= 50
 
     def is_valid_price(self):
@@ -80,10 +89,10 @@ class User(BaseModel):
 
     def clean(self):
         if not self.is_valid_email():
-            raise Exception('Correo no valido.')
+            raise ValidationException('Correo no valido.')
 
         if not self.is_valid_username():
-            raise Exception('Nombre de usuario no valido')
+            raise ValidationException('Nombre de usuario no valido')
 
     def is_valid_email(self):
         email = getattr(self, 'email')
@@ -95,7 +104,7 @@ class User(BaseModel):
     def is_valid_username(self):
         username = getattr(self, 'username')
 
-        pattern = rf"^[a-zA-Z0-9._]+"
+        pattern = rf"^[a-zA-Z0-9._]+$"
         return bool(re.match(pattern, username))
 
 

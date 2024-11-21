@@ -1,4 +1,6 @@
+import traceback
 from controller.decorators import requires_authentication, validate_csrf
+from exception import ValidationException
 from server.response import Response
 from service import user as user_service
 
@@ -35,8 +37,8 @@ def update_user(request, key):
 
     try:
         user_service.update_user_role(key, request.form_data)
-    except Exception as e:
-        print(e)
+    except ValidationException:
+        print(traceback.format_exc())
     return Response.redirect('/users')
 
 
@@ -44,14 +46,13 @@ def signup(request):
     if request.method == "POST":
         try:
             user_service.signup_service(**request.form_data)
-        except Exception as e:
-            print(e)
+        except ValidationException as e:
+            print(traceback.format_exc())
             return Response.render(
                 request,
                 template_name='/auth/signup.html',
                 context={"error": e}
             )
-
         return Response.redirect('/signin')
     return Response.render(
         request,
@@ -63,8 +64,8 @@ def signin(request):
     if request.method == "POST":
         try:
             token, expires_at = user_service.signin_service(**request.form_data)
-        except Exception as e:
-            print(e)
+        except ValidationException:
+            print(traceback.format_exc())
             return Response.redirect('/signin')
 
         date_format = "%a, %d %b %Y %H:%M:%S GMT"

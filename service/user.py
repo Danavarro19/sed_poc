@@ -9,27 +9,28 @@ import bcrypt
 import re
 
 from data.orm.manager import Filter
+from exception import ValidationException, AuthenticationException
 
 
 def signup_service(**data):
     if not is_password_valid(data['password']):
-        raise Exception('Contraseña debil')
+        raise ValidationException('Contraseña debil')
     data['password'] = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     data['role'] = 'user'
     user = User(**data)
     try:
         user.save()
-    except psycopg2.errors.UniqueViolation as e:
-        raise Exception('Campos duplicados.')
+    except psycopg2.errors.UniqueViolation:
+        raise ValidationException('Campos duplicados.')
 
 
 def signin_service(username, password):
     user = User.objects.select_by_field("username", username)
     if not user:
-        raise Exception("User not found")
+        raise AuthenticationException("User not found")
 
     if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-        raise Exception("Invalid password")
+        raise AuthenticationException("Invalid password")
 
     session_token = secrets.token_hex(32)
     csrf_token = secrets.token_urlsafe(32)
@@ -90,8 +91,8 @@ def get_users():
 
 def update_user_role(key, data):
     if len(data.values()) > 1 or list(data.keys())[0] != 'role':
-        raise Exception("Invalid data")
+        raise ValidationException("Invalid data")
 
     if data['role'] not in ['admin', 'user']:
-        raise Exception("Invalid role")
+        raise ValidationException("Invalid role")
     User.objects.update(key, data)
