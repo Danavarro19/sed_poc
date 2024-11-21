@@ -8,6 +8,7 @@
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <label for="sku" class="form-label">SKU:</label>
             <input type="text" id="sku" name="sku" class="form-control" required autofocus>
+            <div id="sku-help" class="form-text"><span>El codigo debe iniciar con dos letras: JK28391.</span></div>
 
             <label for="name" class="form-label">Nombre:</label>
             <input type="text" id="name" name="name" class="form-control" required autofocus>
@@ -30,6 +31,13 @@
                 <option value="true">Sí</option>
                 <option value="false" selected>No</option>
             </select>
+
+
+            {% if error %}
+                <div>
+                    <span class="text-danger">{{ error }}</span>
+                </div>
+            {% endif %}
 
             <div class="d-flex flex-row align-items-center mt-2">
                 <div class="me-2">

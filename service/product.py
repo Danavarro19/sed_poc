@@ -1,3 +1,5 @@
+import psycopg2
+
 from data.model import Product
 from data.orm.manager import Filter
 
@@ -22,7 +24,10 @@ def get_product(key):
 
 def add_product(data):
     product = Product(**data)
-    product.save()
+    try:
+        product.save()
+    except psycopg2.errors.UniqueViolation as e:
+        raise Exception('Campos duplicados')
 
 
 def delete_product(key):

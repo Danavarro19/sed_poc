@@ -19,7 +19,11 @@ def products(request):
             product_service.add_product(request.form_data)
         except Exception as e:
             print(e)
-            return Response.redirect('/products/new')
+            return Response.render(
+                request,
+                template_name='/product/new.html',
+                context={"error": e}
+            )
         return Response.redirect('/products')
 
 
@@ -27,7 +31,7 @@ def products(request):
 def new_product(request):
     if request.method != 'GET':
         return Response.not_found(request)
-    
+
     return Response.render(
         request,
         template_name='/product/new.html'
