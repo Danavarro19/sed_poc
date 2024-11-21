@@ -50,6 +50,7 @@ class BaseManager:
                     filter_clauses.append(current_filter.logical_operator)
 
             query += " WHERE " + " ".join(filter_clauses)
+            query += f" ORDER BY {self.model_class.primary_key}"
 
         cursor = self._get_cursor()
         try:

@@ -15,9 +15,6 @@ def products(request):
             data = product_service.get_products()
         return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
-        if not request.user.is_admin:
-            return Response.unauthorized(request)
-
         try:
             product_service.add_product(request.form_data)
         except Exception as e:
@@ -28,9 +25,9 @@ def products(request):
 
 @requires_authentication
 def new_product(request):
-    if not request.user.is_admin:
-        return Response.unauthorized(request)
-
+    if request.method != 'GET':
+        return Response.not_found(request)
+    
     return Response.render(
         request,
         template_name='/product/new.html'
@@ -54,7 +51,7 @@ def get_product(request, key):
 @requires_authentication
 @validate_csrf
 def delete_product(request, key):
-    if request.user.is_super:
+    if request.user.is_admin:
         product_service.delete_product(key)
         return Response.redirect('/products')
 

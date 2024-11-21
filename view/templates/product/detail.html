@@ -20,9 +20,6 @@
             <div class="me-2">
                 <a href="/products/{{ product.product_id }}/update" class="btn btn-warning">Editar</a>
             </div>
-        {% endif %}
-
-        {% if user.is_super%}
             <div class="me-2">
                 <form action="/products/{{ product.product_id }}/delete" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
