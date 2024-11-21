@@ -1,5 +1,7 @@
 import hashlib
 
+import psycopg2
+
 from data.model import User, Session
 from datetime import datetime, timedelta, timezone
 import secrets
@@ -11,11 +13,14 @@ from data.orm.manager import Filter
 
 def signup_service(**data):
     if not is_password_valid(data['password']):
-        raise Exception('Insecure password')
+        raise Exception('Contraseña debil')
     data['password'] = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     data['role'] = 'user'
     user = User(**data)
-    user.save()
+    try:
+        user.save()
+    except psycopg2.errors.UniqueViolation as e:
+        raise Exception('Campos duplicados.')
 
 
 def signin_service(username, password):

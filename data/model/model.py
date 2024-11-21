@@ -10,21 +10,21 @@ class Product(BaseModel):
 
     def clean(self):
         if not self.is_valid_name():
-            raise Exception('Invalid product name')
+            raise Exception('Nombre no valido.')
 
         if not self.is_valid_price():
-            raise Exception('Invalid price')
+            raise Exception('Precio no valido.')
 
         if not self.is_valid_stock_quantity():
-            raise Exception('Invalid stock quantity')
+            raise Exception('Cantidad disponible no valida.')
 
         if not self.is_valid_sku():
-            raise Exception('Invalid SKU')
+            raise Exception('SKU no valido.')
         sku = getattr(self, 'sku')
         setattr(self, 'sku', sku.upper())
 
         if not self.is_valid_weight():
-            raise Exception('Invalid weight')
+            raise Exception('Peso no valido.')
 
     def is_valid_name(self):
         name = getattr(self, 'name', '')
@@ -80,10 +80,10 @@ class User(BaseModel):
 
     def clean(self):
         if not self.is_valid_email():
-            raise Exception('Invalid email')
+            raise Exception('Correo no valido.')
 
         if not self.is_valid_username():
-            raise Exception('Invalid username')
+            raise Exception('Nombre de usuario no valido')
 
     def is_valid_email(self):
         email = getattr(self, 'email')

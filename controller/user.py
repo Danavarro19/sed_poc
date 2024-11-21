@@ -46,7 +46,11 @@ def signup(request):
             user_service.signup_service(**request.form_data)
         except Exception as e:
             print(e)
-            return Response.redirect('/signup')
+            return Response.render(
+                request,
+                template_name='/auth/signup.html',
+                context={"error": e}
+            )
 
         return Response.redirect('/signin')
     return Response.render(
