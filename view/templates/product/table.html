@@ -10,8 +10,8 @@
             </thead>
             <tbody>
             {% for product in products %}
-                <tr>
-                    <td><a href="/products/{{ product.product_id }}">{{ product.name }}</a></td>
+                <tr {% if not product.is_available %}class="table-secondary"{% endif %}>
+                    <td><a href="/products/{{ product.product_id }}" {% if not product.is_available %}class="link-secondary"{% endif %}>{{ product.name }}</a></td>
                     <td>{{ product.description }}</td>
                     <td>{{ product.price }}</td>
                     <td>{{ product.stock_quantity }}</td>

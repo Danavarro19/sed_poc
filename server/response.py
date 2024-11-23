@@ -1,5 +1,7 @@
 from http.cookies import SimpleCookie
 
+from view.template import render_template
+
 
 class Response:
     def __init__(self, body='', status='200 OK', headers=None):
@@ -20,16 +22,29 @@ class Response:
         self.set_cookie(key, '', expires='Thu, 01 Jan 1970 00:00:00 GMT')
 
     @classmethod
-    def redirect(cls, location, status='302 Found', headers=None, cookies=None):
+    def redirect(cls, location, status='302 Found'):
         response = cls(body='', status=status)
         response.set_header('Location', location)
-        if headers:
-            for header, value in headers:
-                response.set_header(header, value)
-        if cookies:
-            for key, value in cookies.items():
-                response.set_cookie(key, value)
         return response
+
+    @classmethod
+    def not_found(cls, request):
+        context = {'user': request.user}
+        return cls(body=render_template('not_found.html', context=context), status='404 Not Found')
+
+    @classmethod
+    def unauthorized(cls, request):
+        context = {'user': request.user}
+        return cls(body=render_template('unauthorized.html', context=context), status='401 Unauthorized')
+
+    @classmethod
+    def render(cls, request, *, template_name, context=None, status='200 OK'):
+        if context is None:
+            context = {'user': request.user, 'session': request.session}
+        else:
+            context['user'] = request.user
+            context['session'] = request.session
+        return cls(body=render_template(template_name, context=context), status=status)
 
     def wsgi_response(self, start_response):
         for morsel in self.cookies.values():

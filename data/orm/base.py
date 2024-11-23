@@ -30,5 +30,9 @@ class BaseModel(metaclass=MetaModel):
         )
         return f"<{self.__class__.__name__}: ({attrs_format})>"
 
+    def clean(self):
+        pass
+
     def save(self):
+        self.clean()
         self.__class__.objects.insert(self)

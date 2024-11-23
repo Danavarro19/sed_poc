@@ -1,8 +1,11 @@
+import traceback
+from controller.decorators import requires_authentication, validate_csrf
 from server.response import Response
-from view.template import render_template
 from service import product as product_service
 
 
+@requires_authentication
+@validate_csrf
 def products(request):
     if request.method == "GET":
         template = '/product/products.html'
@@ -11,21 +14,79 @@ def products(request):
             data = product_service.get_products(request.query_string)
         else:
             data = product_service.get_products()
-        return Response(render_template(template, context={'products': data}))
+        return Response.render(request, template_name=template, context={'products': data})
     if request.method == "POST":
-        product_service.add_product(request.form_data)
+        try:
+            product_service.add_product(request.form_data)
+        except Exception as e:
+            print(traceback.format_exc())
+            return Response.render(
+                request,
+                status='400 Bad Request',
+                template_name='/product/new.html',
+                context={"error": e}
+            )
         return Response.redirect('/products')
 
 
+@requires_authentication
 def new_product(request):
-    return Response(render_template('/product/new.html'))
+    if request.method != 'GET':
+        return Response.not_found(request)
+
+    return Response.render(
+        request,
+        template_name='/product/new.html'
+    )
 
 
-def get_product_by_id(request, key):
-    data = product_service.get_product(key)
-    return Response(render_template('/product/detail.html', context={'product': data}))
+@requires_authentication
+def get_product(request, key):
+    try:
+        data = product_service.get_product(key)
+    except Exception:
+        print(traceback.format_exc())
+        return Response.not_found(request)
+    return Response.render(
+        request,
+        template_name='/product/detail.html',
+        context={'product': data}
+    )
 
 
+@requires_authentication
+@validate_csrf
 def delete_product(request, key):
-    product_service.delete_product(key)
-    return Response.redirect('/products')
+    if request.user.is_admin:
+        product_service.delete_product(key)
+        return Response.redirect('/products')
+
+    return Response.unauthorized(request)
+
+
+@requires_authentication
+@validate_csrf
+def update_product(request, key):
+    if request.user.is_admin:
+        product = product_service.get_product(key)
+        if request.method == "GET":
+            return Response.render(
+                request,
+                template_name='/product/update.html',
+                context={'product': product}
+            )
+
+        if request.method == "POST":
+            try:
+                product_service.update_product(key, request.form_data)
+            except:
+                print(traceback.format_exc())
+                return Response.render(
+                    request,
+                    status='400 Bad Request',
+                    template_name='/product/update.html',
+                    context={"product": product}
+                )
+            return Response.redirect(f'/products/{key}')
+    else:
+        return Response.unauthorized(request)

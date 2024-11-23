@@ -1,3 +1,5 @@
+import psycopg2
+
 from data.model import Product
 from data.orm.manager import Filter
 
@@ -13,13 +15,24 @@ def get_products(filter_by=None):
 
 
 def get_product(key):
-    return Product.objects.select_by_pk(key)
+    product = Product.objects.select_by_pk(key)
+    if not product:
+        raise Exception('Product not found')
+
+    return product
 
 
 def add_product(data):
     product = Product(**data)
-    product.save()
+    try:
+        product.save()
+    except psycopg2.errors.UniqueViolation as e:
+        raise Exception('Campos duplicados')
 
 
 def delete_product(key):
     Product.objects.delete(key)
+
+
+def update_product(key, data):
+    Product.objects.update(key, data)

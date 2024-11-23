@@ -50,6 +50,7 @@ class BaseManager:
                     filter_clauses.append(current_filter.logical_operator)
 
             query += " WHERE " + " ".join(filter_clauses)
+            query += f" ORDER BY {self.model_class.primary_key}"
 
         cursor = self._get_cursor()
         try:
@@ -69,28 +70,33 @@ class BaseManager:
         finally:
             cursor.close()
 
-    def select_by_field(self, field, key):
-        query = f"SELECT * FROM {self.model_class.table_name} WHERE {field} = %s"
+    def select_by_field(self, field, key, field_names=None):
+        if field_names is None:
+            field_names = [self.model_class.primary_key] + self.model_class.fields
+
+        fields_format = ", ".join(field_names)
+        query = f"SELECT {fields_format} FROM {self.model_class.table_name} WHERE {field} = %s"
         cursor = self._get_cursor()
         try:
             cursor.execute(query, (key,))
             result = cursor.fetchone()
             if result:
-                row_data = dict(zip([self.model_class.primary_key] + self.model_class.fields, result))
+                row_data = dict(zip(field_names, result))
                 return self.model_class(**row_data)
             else:
                 return None
         finally:
             cursor.close()
 
-    def select_by_pk(self, key):
-        return self.select_by_field(self.model_class.primary_key, key)
+    def select_by_pk(self, key, field_names=None):
+        return self.select_by_field(self.model_class.primary_key, key, field_names=field_names)
 
     def insert(self, instance):
-        fields_format = ", ".join(instance.fields)
-        values_format = ", ".join(["%s"] * len(instance.fields))
+        fields = instance.__dict__.keys()
+        fields_format = ", ".join(fields)
+        values_format = ", ".join(["%s"] * len(fields))
         query = f"INSERT INTO {instance.table_name} ({fields_format}) VALUES ({values_format})"
-        params = [getattr(instance, field) for field in instance.fields]
+        params = [getattr(instance, field) for field in fields]
         self._execute_query(query, params)
 
     def update(self, key, new_data: dict):

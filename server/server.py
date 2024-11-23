@@ -1,3 +1,4 @@
+from service.user import validate_session
 from url import urls
 from pprint import pprint
 
@@ -21,6 +22,11 @@ class Server:
         request = Request(environ)
         handler, kwargs = self.router.get_handler(request.path)
 
+        if request.is_authenticated:
+            user, session = validate_session(request.get_cookie('session_token'))
+            request.set_user(user)
+            request.set_session(session)
+
         if handler:
             try:
                 if kwargs:
@@ -36,11 +42,10 @@ class Server:
                 response_obj = Response(body=response)
                 return response_obj.wsgi_response(start_response)
             else:
-                # Handle unexpected response types
                 error_response = Response(body='500 Internal Server Error', status='500 Internal Server Error')
                 return error_response.wsgi_response(start_response)
         else:
-            not_found_response = Response(body='404 Not Found', status='404 Not Found')
+            not_found_response = Response.not_found(request)
             return not_found_response.wsgi_response(start_response)
 
 
