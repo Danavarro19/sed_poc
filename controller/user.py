@@ -1,12 +1,14 @@
 import traceback
+
 from controller.decorators import requires_authentication, validate_csrf
-from exception import ValidationException
+from exception import ValidationException, AuthenticationException
 from server.response import Response
 from service import user as user_service
 
 
 def index(request):
-
+    if request.user and request.session:
+        Response.redirect('/products')
     return Response.render(
         request,
         template_name='index.html'
@@ -43,6 +45,8 @@ def update_user(request, key):
 
 
 def signup(request):
+    if request.user and request.session:
+        Response.redirect('/products')
     if request.method == "POST":
         try:
             user_service.signup_service(**request.form_data)
@@ -50,6 +54,7 @@ def signup(request):
             print(traceback.format_exc())
             return Response.render(
                 request,
+                status='400 Bad Request',
                 template_name='/auth/signup.html',
                 context={"error": e}
             )
@@ -61,12 +66,18 @@ def signup(request):
 
 
 def signin(request):
+    if request.user and request.session:
+        Response.redirect('/products')
     if request.method == "POST":
         try:
             token, expires_at = user_service.signin_service(**request.form_data)
-        except ValidationException:
+        except AuthenticationException:
             print(traceback.format_exc())
-            return Response.redirect('/signin')
+            return Response.render(
+                request,
+                status='400 Bad Request',
+                template_name='/auth/signin.html',
+            )
 
         date_format = "%a, %d %b %Y %H:%M:%S GMT"
         response = Response.redirect('/products')

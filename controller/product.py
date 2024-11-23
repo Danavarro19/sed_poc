@@ -22,6 +22,7 @@ def products(request):
             print(traceback.format_exc())
             return Response.render(
                 request,
+                status='400 Bad Request',
                 template_name='/product/new.html',
                 context={"error": e}
             )
@@ -67,8 +68,8 @@ def delete_product(request, key):
 @validate_csrf
 def update_product(request, key):
     if request.user.is_admin:
+        product = product_service.get_product(key)
         if request.method == "GET":
-            product = product_service.get_product(key)
             return Response.render(
                 request,
                 template_name='/product/update.html',
@@ -80,7 +81,12 @@ def update_product(request, key):
                 product_service.update_product(key, request.form_data)
             except:
                 print(traceback.format_exc())
-                return Response.redirect(f'/products/{key}/update')
+                return Response.render(
+                    request,
+                    status='400 Bad Request',
+                    template_name='/product/update.html',
+                    context={"product": product}
+                )
             return Response.redirect(f'/products/{key}')
     else:
         return Response.unauthorized(request)
